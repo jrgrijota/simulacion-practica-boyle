@@ -1344,14 +1344,23 @@ function dibujarRotulos() {
     const paso = pasoActual();
     let cuerpo = hayMensaje ? mensaje : indicacion();
     if (!hayMensaje && nivel === 'guiada' && paso <= N_PASOS) cuerpo = cuerpo.replace(/^[^:]{1,16}:\s+/, '');
+    cuerpo = cuerpo.charAt(0).toUpperCase() + cuerpo.slice(1);
     cuerpo = cuerpo.replace(/^⚠\s*/, '');
     const etiqueta = esAviso ? i18n.t('AVISO')
         : nivel === 'libre' ? i18n.t('NIVEL LIBRE')
         : paso <= N_PASOS ? i18n.t('PASO {n} DE {t}', { n: paso, t: N_PASOS })
         : i18n.t('PRÁCTICA TERMINADA');
-    const cabecera = movil && !esAviso
+    const cabecera = (movil || tarjetaFuera()) && !esAviso
         ? etiqueta + ' · ' + i18n.t('MONTAJE {n} · {c} mL · {t} °C', { n: montaje.n, c: capJeringa, t: montaje.tSala })
         : etiqueta;
+
+    // En el móvil la tarjeta va fuera del lienzo, encima: dentro tapaba la parte de
+    // arriba del manómetro cuando la indicación ocupaba cuatro o cinco líneas.
+    if (tarjetaFuera()) {
+        ponerTarjetaMovil(cabecera, cuerpo, esAviso);
+        return;
+    }
+    ponerTarjetaMovil(null);
 
     const tp = tamTexto(13);
     textSize(tp);
@@ -1404,6 +1413,28 @@ function dibujarRotulos() {
     textSize(tp);
     textAlign(CENTER, CENTER);
     text(txtP, xP + wP / 2, yP + hP / 2 + 0.5);
+}
+
+const consultaMovil = window.matchMedia('(max-width: 700px)');
+function tarjetaFuera() { return consultaMovil.matches; }
+
+let tarjetaMovilAntes = '';
+function ponerTarjetaMovil(cabecera, cuerpo, esAviso) {
+    const el = document.getElementById('tarjeta-movil');
+    if (!el) return;
+    const clave = cabecera === null ? '' : [cabecera, cuerpo, esAviso, TH.tarjeta, TH.texto].join('|');
+    if (clave === tarjetaMovilAntes) return;
+    tarjetaMovilAntes = clave;
+    if (cabecera === null) { el.hidden = true; return; }
+    el.hidden = false;
+    el.classList.toggle('aviso', esAviso);
+    el.style.background = TH.tarjeta;
+    el.style.borderColor = esAviso ? TH.aviso : TH.tarjetaBorde;
+    el.style.color = TH.texto;
+    const cab = el.querySelector('.tarjeta-movil-cabecera');
+    cab.textContent = (esAviso ? '⚠ ' : '') + cabecera;
+    cab.style.color = esAviso ? TH.aviso : TH.acento;
+    el.querySelector('.tarjeta-movil-texto').textContent = cuerpo;
 }
 
 function tamTexto(base) {
