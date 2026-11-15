@@ -63,7 +63,7 @@ Parámetros de la dirección, para repartir la práctica:
 | `?jeringa=20` | En el nivel libre, empieza con la jeringa de 20 mL |
 | `?manometro=relativo` | En el nivel libre, empieza con el manómetro relativo y el barómetro |
 
-Por ahora la interfaz solo está en español; las traducciones se harán con la versión definitiva.
+La interfaz está en español, inglés, catalán, euskera y gallego: `?lang=en`, `?lang=ca`, `?lang=eu` o `?lang=gl` (diccionarios en `js/i18n-*.js`).
 
 ## Estructura
 
@@ -74,4 +74,4 @@ Por ahora la interfaz solo está en español; las traducciones se harán con la 
 | `css/practica.css` | Estilos propios: pasos, cuaderno, gráfica, pregunta y botones de los instrumentos |
 | `js/montajes.js` | Los 12 montajes, las jeringas y los manómetros |
 | `js/sketch.js` | Mesa de laboratorio, manómetro, llave, jeringa, lupa, física del aire, pasos y comprobaciones |
-| `js/i18n.js`, `js/i18n-en.js`, `js/i18n-ca.js`, `js/i18n-eu.js`, `js/i18n-gl.js` | Idioma de la interfaz (diccionarios pendientes) |
+| `js/i18n.js`, `js/i18n-en.js`, `js/i18n-ca.js`, `js/i18n-eu.js`, `js/i18n-gl.js` | Idioma de la interfaz |
