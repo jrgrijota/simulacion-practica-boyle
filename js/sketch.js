@@ -626,7 +626,7 @@ function construirCuaderno() {
         const s = document.createElement('span');
         s.className = 'th';
         s.setAttribute('role', 'columnheader');
-        s.innerHTML = a + (b ? `<span class="opcional">${i18n.t(b)}</span>` : '');
+        s.innerHTML = i18n.t(a) + (b ? `<span class="opcional">${i18n.t(b)}</span>` : '');
         t.appendChild(s);
     });
     OBJETIVOS.forEach((v, k) => {
