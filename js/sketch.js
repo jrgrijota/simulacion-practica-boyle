@@ -45,7 +45,7 @@ const N_PASOS = PASOS.length;
 
 const INDICACIONES = [
     'Paso 1: con la llave abierta (palanca hacia arriba), tira del mango del émbolo hasta que el borde de la goma que toca el aire quede en 40 mL.',
-    'Paso 2: lleva la lupa a la aguja, lee la presión del aire de la sala y apunta la medida 1: el volumen y la presión.',
+    'Paso 2: con la llave abierta, el aire de la jeringa está unido al de la sala y tiene su misma presión. Lleva la lupa a la aguja, lee esa presión y apúntala con el volumen como medida 1.',
     'Paso 3: cierra la llave (palanca hacia abajo) para encerrar el aire de la jeringa.',
     'Paso 4: empuja el émbolo despacio hasta {v} mL. Espera a que la aguja se pare y apunta el volumen y la presión.',
     'Paso 5: ahora tira del émbolo hasta {v} mL. Espera a que la aguja se pare y apunta el volumen y la presión.',
@@ -87,7 +87,7 @@ let arrastre = null;           // { que: 'embolo' | 'lupa', dx, dy }
 let errorPendiente = null;     // { tipo, t }
 let bloqueado = false;
 
-let datos = {};                // valores del cuaderno (números): v1, p1, pv1, iv1…, atm, pred
+let datos = {};                // valores del cuaderno (números): v1, p1, pv1, iv1…, pred
 let correctos = {};
 let vistoInversa = false;
 let prediccionComprobada = false;
@@ -515,10 +515,6 @@ function comprobarDato(id) {
         pista = Math.abs(x - 1 / datos['v' + i]) < 0.002
             ? i18n.t('Ese es 1/V en mL⁻¹. Aquí va en L⁻¹: como 1 L = 1000 mL, 1/V = 1000 / V.')
             : i18n.t('1/V en L⁻¹ es 1000 entre tu volumen en mL. Por ejemplo, con 40 mL: 1000 / 40 = 25.');
-    } else if (id === 'atm') {
-        const esperado = datos.p1 / 101.3;
-        ok = Math.abs(x - esperado) <= 0.006;
-        pista = i18n.t('Divide tu presión entre 101,3 kPa, que es 1 atm. Redondea a dos decimales.');
     } else if (id === 'pred') {
         const k = kAlumno();
         const esperado = k / VOL_PREDICCION;
@@ -532,10 +528,9 @@ function comprobarDato(id) {
     marcar(id, ok);
     if (ok) {
         let txt = i18n.t('Bien apuntado.');
-        if (id === 'atm') txt = i18n.t('Bien: unas {a} atm. Es menos de 1 atm porque Madrid está a unos 650 m de altitud y encima hay menos aire.', { a: i18n.num(x, 2) });
         if (id === 'pred') txt = i18n.t('Predicción apuntada. Ahora lleva el émbolo a 45 mL, espera a que la aguja se pare y mira si marca lo que has predicho.');
         const siguiente = pasoActual();
-        if (id !== 'atm' && id !== 'pred' && siguiente <= N_PASOS) txt += ' ' + indicacionPaso(siguiente);
+        if (id !== 'pred' && siguiente <= N_PASOS) txt += ' ' + indicacionPaso(siguiente);
         avisoCuaderno(txt, 'bien');
         if (tipo === 'pv' && OBJETIVOS.every((_, k) => correctos['pv' + (k + 1)])) resultadoLey();
     } else {
@@ -807,7 +802,6 @@ function actualizarInterfaz() {
         document.getElementById('fila-' + i).classList.toggle('ahora', actual);
         document.getElementById('objetivo-' + i).hidden = !(actual && !enSitio);
     });
-    document.getElementById('dato-atm').disabled = !(filaHecha(1) && !correctos.atm);
     document.getElementById('dato-pred').disabled = !(paso === 8 && !correctos.pred);
 
     document.querySelectorAll('.opcion').forEach((b, k) => {
